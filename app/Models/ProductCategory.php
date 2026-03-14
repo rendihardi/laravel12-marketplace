@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class ProductCategory extends Model
+{
+    use HasUuids, SoftDeletes;
+
+    protected $fillable = [
+        'parent_id',
+        'image',
+        'name',
+        'slug',
+        'tagline',
+        'description',
+    ];
+
+    public function parent()
+    {
+        return $this->belongsTo(ProductCategory::class);
+    }
+
+    public function children()
+    {
+        return $this->hasMany(ProductCategory::class, 'parent_id');
+    }
+}
