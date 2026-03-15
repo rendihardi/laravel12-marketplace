@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StoreBalance extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'store_id',
@@ -32,5 +33,12 @@ class StoreBalance extends Model
     public function withdrawals()
     {
         return $this->hasMany(Withdrawal::class);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->whereHas('store', function ($query) use ($search) {
+            $query->where('name', 'like', '%'.$search.'%');
+        });
     }
 }
