@@ -30,7 +30,7 @@ class StoreController extends Controller
             'limit' => 'nullable|integer',
         ]);
         try {
-            $store = $this->storeRepository->getAllPaginated(
+            $store = $this->storeRepository->getAll(
                 $request->search,
                 $request->is_verified,
                 $request->limit,

@@ -49,7 +49,7 @@ class StoreBalanceRepository implements StoreBalanceInterface
         DB::beginTransaction();
         try {
             $storeBalance = StoreBalance::find($id);
-            $storeBalance->amount = bcadd($storeBalance->amount, $amount, 2);
+            $storeBalance->balance = bcadd($storeBalance->balance, $amount, 2);
             $storeBalance->save();
             DB::commit();
 
@@ -65,10 +65,10 @@ class StoreBalanceRepository implements StoreBalanceInterface
         DB::beginTransaction();
         try {
             $storeBalance = StoreBalance::find($id);
-            if (bccomp($storeBalance->amount, $amount, 2) < 0) {
+            if (bccomp($storeBalance->balance, $amount, 2) < 0) {
                 throw new \Exception('Insufficient balance');
             }
-            $storeBalance->amount = bcsub($storeBalance->amount, $amount, 2);
+            $storeBalance->balance = bcsub($storeBalance->balance, $amount, 2);
             $storeBalance->save();
             DB::commit();
 

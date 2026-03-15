@@ -23,7 +23,7 @@ class StoreBalanceHistoryController extends Controller
     public function index(Request $request)
     {
         try {
-            $balanceHistory = $this->storeBalanceHistoryRepository->getAllPaginated(
+            $balanceHistory = $this->storeBalanceHistoryRepository->getAll(
                 $request->search,
                 $request->limit,
                 true

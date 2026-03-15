@@ -26,7 +26,7 @@ class StoreBalanceHistoryFactory extends Factory
             'reference_id' => null,
             'reference_type' => null,
             'amount' => fake()->randomFloat(2, 0, 10000000),
-            'remark' => 'Pembuatan toko baru',
+            'remarks' => 'Pembuatan toko baru',
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Store;
 use App\Models\StoreBalance;
 use App\Models\StoreBalanceHistory;
+use App\Models\Withdrawal;
 use Database\Factories\StoreFactory;
 use Illuminate\Database\Seeder;
 
@@ -24,7 +25,9 @@ class StoreSeeder extends Seeder
                 'store_balance_id' => $storeBalance->id,
                 'amount' => $storeBalance->balance,
             ]);
-
+            Withdrawal::factory()->count(1)->create([
+                'store_balance_id' => $storeBalance->id,
+            ]);
         });
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StoreBalanceHistoryResource extends JsonResource
+class WithdrawalResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,10 +17,10 @@ class StoreBalanceHistoryResource extends JsonResource
         return [
             'store_balance' => new StoreBalanceResource($this->storeBalance),
             'amount' => $this->amount,
-            'type' => $this->type,
-            'reference_id' => $this->reference_id,
-            'reference_type' => $this->reference_type,
-            'remarks' => $this->remarks,
+            'bank_account_name' => $this->bank_account_name,
+            'bank_account_number' => $this->bank_account_number,
+            'bank_name' => $this->bank_name,
+            'status' => $this->status,
         ];
     }
 }

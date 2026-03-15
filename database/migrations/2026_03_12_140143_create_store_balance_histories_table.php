@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('reference_id')->nullable();
             $table->string('reference_type')->nullable();
             $table->decimal('amount', 26, 2);
-            $table->string('remark');
+            $table->string('remarks');
             $table->softDeletes();
             $table->timestamps();
         });

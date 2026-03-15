@@ -1,0 +1,120 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Helpers\ResponseHelper;
+use App\Http\Requests\WithdrawalApproveRequest;
+use App\Http\Requests\WithdrawalStoreRequest;
+use App\Http\Resources\PaginatedResource;
+use App\Http\Resources\WithdrawalResource;
+use App\Interface\WithdrawalInterface;
+use Illuminate\Http\Request;
+
+class WithdrawalController extends Controller
+{
+    private WithdrawalInterface $withdrawalRepository;
+
+    public function __construct(WithdrawalInterface $withdrawalRepository)
+    {
+        $this->withdrawalRepository = $withdrawalRepository;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        try {
+            $withdrawal = $this->withdrawalRepository->getAll($request->search,
+                $request->limit,
+                true);
+
+            return ResponseHelper::jsonResponse(true, 'Data Withdrawal', WithdrawalResource::collection($withdrawal), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
+    public function getAllPaginated(Request $request)
+    {
+        $request->validate([
+            'search' => 'nullable|string',
+            'row_per_page' => 'required|integer',
+        ]);
+
+        try {
+            $withdrawal = $this->withdrawalRepository->getAllPaginated(
+                $request->search,
+                $request->row_per_page,
+                false
+            );
+
+            return ResponseHelper::jsonResponse(true, 'Data User', PaginatedResource::make($withdrawal, WithdrawalResource::class), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(WithdrawalStoreRequest $request)
+    {
+        $request = $request->validated();
+        try {
+            $withdrawal = $this->withdrawalRepository->create($request);
+
+            return ResponseHelper::jsonResponse(true, 'Data Withdrawal', new WithdrawalResource($withdrawal), 201);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        try {
+            $withdrawal = $this->withdrawalRepository->getById($id);
+            if (! $withdrawal) {
+                return ResponseHelper::jsonResponse(false, 'Data Withdrawal Not Found', null, 404);
+            }
+
+            return ResponseHelper::jsonResponse(true, 'Data Withdrawal', new WithdrawalResource($withdrawal), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+
+    public function approve(WithdrawalApproveRequest $request, string $id)
+    {
+        $request = $request->validated();
+        try {
+            if (! $this->withdrawalRepository->getById($id)) {
+                return ResponseHelper::jsonResponse(false, 'Data Withdrawal Not Found', null, 404);
+            }
+            $withdrawal = $this->withdrawalRepository->approve($id, $request['proof']);
+
+            return ResponseHelper::jsonResponse(true, 'Data Withdrawal Disetujui', new WithdrawalResource($withdrawal), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+}

@@ -54,7 +54,7 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryInterface
             $storeBalanceHistory->reference_id = $data['reference_id'];
             $storeBalanceHistory->reference_type = $data['reference_type'];
             $storeBalanceHistory->amount = $data['amount'];
-            $storeBalanceHistory->remark = $data['remark'];
+            $storeBalanceHistory->remarks = $data['remarks'];
             $storeBalanceHistory->save();
             DB::commit();
 
@@ -75,7 +75,7 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryInterface
             $storeBalanceHistory->reference_id = $data['reference_id'];
             $storeBalanceHistory->reference_type = $data['reference_type'];
             $storeBalanceHistory->amount = $data['amount'];
-            $storeBalanceHistory->remark = $data['remark'];
+            $storeBalanceHistory->remarks = $data['remarks'];
             $storeBalanceHistory->save();
             DB::commit();
 

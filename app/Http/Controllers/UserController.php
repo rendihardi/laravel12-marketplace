@@ -25,7 +25,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $users = $this->userRepository->getAllPaginated(
+            $users = $this->userRepository->getAll(
                 $request->search,
                 $request->limit,
                 true
