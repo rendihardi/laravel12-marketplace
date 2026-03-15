@@ -31,11 +31,11 @@ class UserRepository implements UserRepositoryInterface
 
     }
 
-    public function getAllPaginated(?string $search, ?int $rowPerPage)
+    public function getAllPaginated(?string $search, ?int $row_per_page)
     {
-        $query = $this->getAll($search, $rowPerPage, false);
+        $query = $this->getAll($search, $row_per_page, false);
 
-        return $query->paginate($rowPerPage);
+        return $query->paginate($row_per_page);
 
     }
 

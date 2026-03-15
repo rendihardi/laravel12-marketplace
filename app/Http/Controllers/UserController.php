@@ -41,13 +41,13 @@ class UserController extends Controller
     {
         $request->validate([
             'search' => 'nullable|string',
-            'rowPerPage' => 'required|integer',
+            'row_per_page' => 'required|integer',
         ]);
 
         try {
             $users = $this->userRepository->getAllPaginated(
                 $request->search,
-                $request->rowPerPage,
+                $request->row_per_page,
                 false
             );
 

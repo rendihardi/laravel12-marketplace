@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Store extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -20,6 +21,10 @@ class Store extends Model
         'address',
         'postal_code',
         'is_verified',
+    ];
+
+    public $casts = [
+        'is_verified' => 'boolean',
     ];
 
     //
@@ -41,5 +46,11 @@ class Store extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', '%'.$search.'%')
+            ->orWhere('phone', 'like', '%'.$search.'%');
     }
 }
