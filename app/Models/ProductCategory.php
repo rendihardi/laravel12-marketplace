@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductCategory extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'parent_id',
@@ -27,5 +28,10 @@ class ProductCategory extends Model
     public function children()
     {
         return $this->hasMany(ProductCategory::class, 'parent_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }
