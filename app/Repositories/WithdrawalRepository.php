@@ -83,7 +83,7 @@ class WithdrawalRepository implements WithdrawalInterface
         DB::beginTransaction();
         try {
             $withdrawal = Withdrawal::find($id);
-            $withdrawal->proof = $proof->store('assets/store', 'public');
+            $withdrawal->proof = $proof->store('assets/withdrawal', 'public');
             $withdrawal->status = 'approved';
             $withdrawal->save();
 

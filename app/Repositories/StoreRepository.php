@@ -10,15 +10,14 @@ class StoreRepository implements StoreRepositoryInterface
 {
     public function getAll(?string $search, ?bool $isVerified, ?int $limit, bool $execute)
     {
-        $query = Store::where(function ($query) use ($search) {
+        $query = Store::where(function ($query) use ($search, $isVerified) {
             if ($search) {
                 $query->search($search);
+                if ($isVerified) {
+                    $query->where('is_verified', $isVerified);
+                }
             }
         });
-
-        if ($isVerified) {
-            $query->where('is_verified', $isVerified);
-        }
 
         if ($limit) {
             $query->take($limit);

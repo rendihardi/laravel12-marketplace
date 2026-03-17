@@ -20,12 +20,18 @@ class ProductCategory extends Model
         'description',
     ];
 
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', '%'.$search.'%')
+            ->orWhere('phone', 'like', '%'.$search.'%');
+    }
+
     public function parent()
     {
         return $this->belongsTo(ProductCategory::class);
     }
 
-    public function children()
+    public function childrens()
     {
         return $this->hasMany(ProductCategory::class, 'parent_id');
     }
