@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Helpers\SlugHelper;
 use App\Interface\ProductCategoryInterface;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ProductCategoryRepository implements ProductCategoryInterface
 {
@@ -68,7 +68,7 @@ class ProductCategoryRepository implements ProductCategoryInterface
             }
             // $productCategory->parent_id = $data['parent_id'];
             $productCategory->name = $data['name'];
-            $productCategory->slug = Str::slug($data['name']);
+            $productCategory->slug = SlugHelper::createSlug(ProductCategory::class, $data['name'], 'slug');
             $productCategory->tagline = $data['tagline'];
             $productCategory->description = $data['description'];
             $productCategory->image = $data['image']->store('assets/category', 'public');
@@ -90,9 +90,13 @@ class ProductCategoryRepository implements ProductCategoryInterface
             if (isset($data['parent_id'])) {
                 $productCategory->parent_id = $data['parent_id'];
             }
-            if (isset($data['name'])) {
+            if (isset($data['name']) && $data['name'] !== $productCategory->name) {
                 $productCategory->name = $data['name'];
-                $productCategory->slug = Str::slug($data['name']);
+                $productCategory->slug = SlugHelper::createSlug(
+                    ProductCategory::class,
+                    $data['name'],
+                    'slug'
+                );
             }
             // $productCategory->slug = $data['slug'];
             $productCategory->tagline = $data['tagline'];

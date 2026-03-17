@@ -23,6 +23,14 @@ class Product extends Model
         'stock',
     ];
 
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', '%'.$search.'%')
+            ->whereHas('productCategory', function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%');
+            });
+    }
+
     protected $casts = [
         'price' => 'decimal:2',
     ];

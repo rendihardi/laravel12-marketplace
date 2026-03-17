@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreBalanceController;
 use App\Http\Controllers\StoreBalanceHistoryController;
 use App\Http\Controllers\StoreController;
@@ -37,3 +38,7 @@ Route::get('/buyer/all/paginated', [BuyerController::class, 'getAllPaginated']);
 Route::apiResource('product-category', ProductCategoryController::class);
 Route::get('/product-category/all/paginated', [ProductCategoryController::class, 'getAllPaginated']);
 Route::get('/product-category/slug/{slug}', [ProductCategoryController::class, 'getBySlug']);
+
+Route::apiResource('product', ProductController::class);
+Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
+Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);

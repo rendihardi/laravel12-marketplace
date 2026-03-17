@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 class SlugHelper
 {
-    public static function generate($model, $name, $column = 'slug')
+    public static function createSlug($model, $name, $column = 'slug')
     {
         $slug = Str::slug($name);
         $originalSlug = $slug;

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('about')->nullable();
             $table->string('condition')->nullable();
             $table->decimal('price', 26, 2);
-            $table->bigInteger('weight');
+            $table->decimal('weight', 26, 2);
             $table->bigInteger('stock');
             $table->softDeletes();
             $table->timestamps();
