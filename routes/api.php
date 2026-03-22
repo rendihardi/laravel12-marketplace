@@ -3,6 +3,7 @@
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\StoreBalanceController;
 use App\Http\Controllers\StoreBalanceHistoryController;
 use App\Http\Controllers\StoreController;
@@ -47,3 +48,5 @@ Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 Route::apiResource('transaction', TransactionController::class);
 Route::get('/transaction/all/paginated', [TransactionController::class, 'getAllPaginated']);
 Route::get('transaction/code/{code}', [TransactionController::class, 'getByCode']);
+
+Route::apiResource('product-review', ProductReviewController::class);

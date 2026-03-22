@@ -1,0 +1,26 @@
+setup Laravel
+- helper response helper
+
+php artisan make:model User -m
+
+buat folder Repositories
+php artisan make:interface UserRepositoryInterface
+buat dan daftarkan provider
+
+php artisan make:controller UserController ---api
+
+php artisan make:resource UserResource
+
+php artisan install:api
+
+php artisan make:request UserStoreRequest
+
+ubah indo di env
+
+php artisan lang:publish
+tambahkan template indo
+
+php artisan make:factory StoreFactory
+php artisan make:seeder 
+
+LINK : php artisan storage:link

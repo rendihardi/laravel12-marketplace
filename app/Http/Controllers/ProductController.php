@@ -7,14 +7,14 @@ use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\PaginatedResource;
 use App\Http\Resources\ProductResource;
-use App\Repositories\ProductRepository;
+use App\Interface\ProductInterface;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    private ProductRepository $productRepository;
+    private ProductInterface $productRepository;
 
-    public function __construct(ProductRepository $productRepository)
+    public function __construct(ProductInterface $productRepository)
     {
         $this->productRepository = $productRepository;
     }
