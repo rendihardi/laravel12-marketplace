@@ -8,6 +8,7 @@ use App\Interface\ProductInterface;
 use App\Interface\StoreBalanceHistoryInterface;
 use App\Interface\StoreBalanceInterface;
 use App\Interface\StoreRepositoryInterface;
+use App\Interface\TransactionInterface;
 use App\Interface\UserRepositoryInterface;
 use App\Interface\WithdrawalInterface;
 use App\Repositories\BuyerRepository;
@@ -16,6 +17,7 @@ use App\Repositories\ProductRepository;
 use App\Repositories\StoreBalanceHistoryRepository;
 use App\Repositories\StoreBalanceRepository;
 use App\Repositories\StoreRepository;
+use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\WithdrawalRepository;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +37,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(BuyerInterface::class, BuyerRepository::class);
         $this->app->bind(ProductCategoryInterface::class, ProductCategoryRepository::class);
         $this->app->bind(ProductInterface::class, ProductRepository::class);
+        $this->app->bind(TransactionInterface::class, TransactionRepository::class);
     }
 
     /**

@@ -27,6 +27,7 @@ class Transaction extends Model
         'grand_total',
         'payment_status',
         'status',
+        'delivery_proof',
         'snap_token',
     ];
 
@@ -35,6 +36,11 @@ class Transaction extends Model
         'tax' => 'decimal:2',
         'grand_total' => 'decimal:2',
     ];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('code', 'like', '%'.$search.'%');
+    }
 
     public function buyer()
     {

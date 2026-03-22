@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('code');
+            $table->string('code')->unique();
             $table->foreignUuid('store_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('buyer_id')->constrained()->cascadeOnDelete();
             $table->string('address_id');
@@ -23,12 +23,13 @@ return new class extends Migration
             $table->string('shipping');
             $table->string('shipping_type');
             $table->decimal('shipping_cost', 26, 2);
-            $table->string('tracking_number');
+            $table->string('tracking_number')->nullable();
             $table->decimal('tax', 26, 2);
             $table->decimal('grand_total', 26, 2);
             $table->enum('payment_status', ['paid', 'unpaid'])->default('unpaid');
+            $table->string('delivery_proof')->nullable();
             $table->enum('status', ['unpaid', 'pending', 'processing', 'delivering', 'cancelled', 'completed'])->default('unpaid');
-            $table->string('snap_token');
+            $table->string('snap_token')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

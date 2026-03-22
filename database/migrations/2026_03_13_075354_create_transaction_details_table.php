@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('transaction_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
-            $table->integer('quantity');
+            $table->integer('qty');
             $table->decimal('price', 26, 2)->nullable();
             $table->decimal('subtotal', 26, 2);
             $table->softDeletes();
