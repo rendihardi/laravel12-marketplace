@@ -165,7 +165,7 @@ class TransactionRepository implements TransactionInterface
         $response = Http::asForm()->withHeaders([
             'key' => env('KEY_RAJA_ONGKIR'),
             'Content-Type' => 'application/x-www-form-urlencoded',
-        ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+        ])->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
             'origin' => $origin,
             'destination' => $destination,
             'weight' => $weight,
@@ -192,5 +192,40 @@ class TransactionRepository implements TransactionInterface
             'tax' => round($subtotal * 0.11),
             'grand_total' => round($subtotal * 1.11 + $shippingCost),
         ];
+    }
+
+    public function updateStatus(?string $id, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $transaction = Transaction::find($id);
+            if (isset($data['tracking_number'])) {
+                $transaction->tracking_number = $data['tracking_number'];
+            }
+            if (isset($data['delivery_proof'])) {
+                $transaction->delivery_proof = $data['delivery_proof']->store('assets/transaction', 'public');
+            }
+            $transaction->status = $data['status'];
+            $transaction->save();
+            DB::commit();
+
+            return $transaction;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function delete(?string $id)
+    {
+        DB::beginTransaction();
+        try {
+            $transaction = Transaction::find($id);
+            $transaction->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

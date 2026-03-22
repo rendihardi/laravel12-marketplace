@@ -27,12 +27,12 @@ interface TransactionInterface
         array $data
     );
 
-    // public function update(
-    //     array $data,
-    //     ?string $id
-    // );
+    public function updateStatus(
+        ?string $id,
+        array $data
+    );
 
-    // public function delete(
-    //     ?string $id
-    // );
+    public function delete(
+        ?string $id
+    );
 }

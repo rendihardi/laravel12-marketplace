@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\TransactionStoreRequest;
+use App\Http\Requests\TransactionUpdateRequest;
 use App\Http\Resources\PaginatedResource;
 use App\Http\Resources\TransactionResource;
 use App\Interface\TransactionInterface;
@@ -99,9 +100,20 @@ class TransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TransactionUpdateRequest $request, string $id)
     {
-        //
+        $request = $request->validated();
+        try {
+            $transaction = $this->transactionRepository->getById($id);
+            if (! $transaction) {
+                return ResponseHelper::jsonResponse(false, 'Data Transaksi Not Found', null, 404);
+            }
+            $transaction = $this->transactionRepository->updateStatus($id, $request);
+
+            return ResponseHelper::jsonResponse(true, 'Data Transaksi', TransactionResource::make($transaction), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
@@ -109,6 +121,16 @@ class TransactionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $transaction = $this->transactionRepository->getById($id);
+            if (! $transaction) {
+                return ResponseHelper::jsonResponse(false, 'Data Transaksi Not Found', null, 404);
+            }
+            $transaction = $this->transactionRepository->delete($id);
+
+            return ResponseHelper::jsonResponse(true, 'Data Transaksi', TransactionResource::make($transaction), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 }
