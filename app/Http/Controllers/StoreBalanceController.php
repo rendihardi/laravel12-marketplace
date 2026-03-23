@@ -7,14 +7,24 @@ use App\Http\Resources\PaginatedResource;
 use App\Http\Resources\StoreBalanceResource;
 use App\Interface\StoreBalanceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class StoreBalanceController extends Controller
+class StoreBalanceController extends Controller implements HasMiddleware
 {
     private StoreBalanceInterface $storeBalanceRepository;
 
     public function __construct(StoreBalanceInterface $storeBalanceRepository)
     {
         $this->storeBalanceRepository = $storeBalanceRepository;
+    }
+
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['store-balance-list|store-balance-create|store-balance-edit|store-balance-delete']), only: ['index', 'getAllPaginate', 'show']),
+        ];
     }
 
     /**

@@ -9,14 +9,27 @@ use App\Http\Resources\PaginatedResource;
 use App\Http\Resources\ProductResource;
 use App\Interface\ProductInterface;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class ProductController extends Controller
+class ProductController extends Controller implements HasMiddleware
 {
     private ProductInterface $productRepository;
 
     public function __construct(ProductInterface $productRepository)
     {
         $this->productRepository = $productRepository;
+    }
+
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['product-list|product-create|product-edit|product-delete']), only: ['index', 'getAllPaginate', 'show', 'getBySlug']),
+            new Middleware(PermissionMiddleware::using(['product-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['product-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['product-delete']), only: ['destroy']),
+        ];
     }
 
     /**

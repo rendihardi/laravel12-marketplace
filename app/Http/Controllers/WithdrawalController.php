@@ -9,14 +9,27 @@ use App\Http\Resources\PaginatedResource;
 use App\Http\Resources\WithdrawalResource;
 use App\Interface\WithdrawalInterface;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class WithdrawalController extends Controller
+class WithdrawalController extends Controller implements HasMiddleware
 {
     private WithdrawalInterface $withdrawalRepository;
 
     public function __construct(WithdrawalInterface $withdrawalRepository)
     {
         $this->withdrawalRepository = $withdrawalRepository;
+    }
+
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['withdrawal-list|withdrawal-create|withdrawal-edit|withdrawal-delete']), only: ['index', 'getAllPaginate', 'show']),
+            new Middleware(PermissionMiddleware::using(['withdrawal-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['withdrawal-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['withdrawal-delete']), only: ['destroy']),
+        ];
     }
 
     /**

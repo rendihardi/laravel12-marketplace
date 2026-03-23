@@ -9,14 +9,27 @@ use App\Http\Resources\PaginatedResource;
 use App\Http\Resources\StoreResource;
 use App\Interface\StoreRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class StoreController extends Controller
+class StoreController extends Controller implements HasMiddleware
 {
     private StoreRepositoryInterface $storeRepository;
 
     public function __construct(StoreRepositoryInterface $storeRepository)
     {
         $this->storeRepository = $storeRepository;
+    }
+
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['store-list|store-create|store-edit|store-delete']), only: ['index', 'getAllPaginate', 'show', 'updateVerifiedStatus']),
+            new Middleware(PermissionMiddleware::using(['store-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['store-edit']), only: ['update', 'updateVerifiedStatus']),
+            new Middleware(PermissionMiddleware::using(['store-delete']), only: ['destroy']),
+        ];
     }
 
     /**
