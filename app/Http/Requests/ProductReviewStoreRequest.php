@@ -24,8 +24,9 @@ class ProductReviewStoreRequest extends FormRequest
     {
         return [
             'transaction_id' => 'required:exists:transactions,id',
+            'product_id' => 'required|exists:products,id',
             'rating' => 'required|numeric|min:1|max:5',
-            'comment' => 'required|string',
+            'review' => 'required|string',
         ];
     }
 

@@ -16,9 +16,10 @@ class ProductReviewResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'transaction_id' => $this->transaction_id,
+            'transaction' => TransactionResource::make($this->transaction),
+            // 'product_id' => $this->product_id,
             'rating' => $this->rating,
-            'comment' => $this->comment,
+            'review' => $this->review,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

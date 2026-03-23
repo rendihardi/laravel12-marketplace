@@ -17,10 +17,10 @@ class ProductReviewRepository implements ProductReviewInterface
             $productReview->transaction_id = $data['transaction_id'];
             // $productReview->transaction_detail_id = $data['transaction_detail_id'];
             // $productReview->store_id = $data['store_id'];
-            // $productReview->product_id = $data['product_id'];
+            $productReview->product_id = $data['product_id'];
             // $productReview->buyer_id = $data['buyer_id'];
             $productReview->rating = $data['rating'];
-            $productReview->comment = $data['comment'];
+            $productReview->review = $data['review'];
             $productReview->save();
             DB::commit();
 

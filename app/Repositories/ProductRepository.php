@@ -49,12 +49,12 @@ class ProductRepository implements ProductInterface
 
     public function getById(?string $id)
     {
-        return Product::with('productImages')->find($id);
+        return Product::with(['productImages', 'productReviews'])->find($id);
     }
 
     public function getBySlug(?string $slug)
     {
-        return Product::with('productImages')->where('slug', $slug)->first();
+        return Product::with(['productImages', 'productReviews'])->where('slug', $slug)->first();
     }
 
     public function create(array $data)
