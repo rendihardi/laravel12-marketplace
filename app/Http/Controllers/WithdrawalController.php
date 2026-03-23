@@ -25,9 +25,9 @@ class WithdrawalController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware(PermissionMiddleware::using(['withdrawal-list|withdrawal-create|withdrawal-edit|withdrawal-delete']), only: ['index', 'getAllPaginate', 'show']),
+            new Middleware(PermissionMiddleware::using(['withdrawal-list|withdrawal-create|withdrawal-edit|withdrawal-delete']), only: ['index', 'getAllPaginate', 'show', 'approve']),
             new Middleware(PermissionMiddleware::using(['withdrawal-create']), only: ['store']),
-            new Middleware(PermissionMiddleware::using(['withdrawal-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['withdrawal-edit']), only: ['update', 'approve']),
             new Middleware(PermissionMiddleware::using(['withdrawal-delete']), only: ['destroy']),
         ];
     }
