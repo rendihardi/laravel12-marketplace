@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, HasUuids, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, HasUuids, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -49,14 +50,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function stores()
+    public function store()
     {
-        return $this->hasMany(Store::class);
+        return $this->hasOne(Store::class);
     }
 
-    public function Buyers()
+    public function Buyer()
     {
-        return $this->hasMany(Buyer::class);
+        return $this->hasOne(Buyer::class);
     }
 
     public function scopeSearch($query, $search)

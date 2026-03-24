@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Interface\AuthRepositoryInterface;
 use App\Interface\BuyerInterface;
 use App\Interface\ProductCategoryInterface;
 use App\Interface\ProductInterface;
@@ -12,6 +13,8 @@ use App\Interface\StoreRepositoryInterface;
 use App\Interface\TransactionInterface;
 use App\Interface\UserRepositoryInterface;
 use App\Interface\WithdrawalInterface;
+use App\Models\PersonalAccessToken;
+use App\Repositories\AuthRepository;
 use App\Repositories\BuyerRepository;
 use App\Repositories\ProductCategoryRepository;
 use App\Repositories\ProductRepository;
@@ -23,6 +26,7 @@ use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\WithdrawalRepository;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -41,6 +45,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ProductInterface::class, ProductRepository::class);
         $this->app->bind(TransactionInterface::class, TransactionRepository::class);
         $this->app->bind(ProductReviewInterface::class, ProductReviewRepository::class);
+        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     }
 
     /**
@@ -48,6 +53,6 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }
 }

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('buyers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->string('profile_picture');
-            $table->string('phone_number');
+            $table->string('profile_picture')->nullable();
+            $table->string('phone_number')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

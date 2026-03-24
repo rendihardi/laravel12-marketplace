@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -65,3 +66,8 @@ Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 
 Route::apiResource('store', StoreController::class);
 Route::get('/store/{store}', [StoreController::class, 'show']);
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('auth:sanctum')->get('/me', [AuthController::class, 'me'])->name('me');
