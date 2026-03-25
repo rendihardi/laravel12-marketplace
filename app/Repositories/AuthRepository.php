@@ -6,6 +6,7 @@ use App\Interface\AuthRepositoryInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthRepository implements AuthRepositoryInterface
 {
@@ -42,11 +43,12 @@ class AuthRepository implements AuthRepositoryInterface
         DB::beginTransaction();
 
         try {
-            if (! Auth::guard('web')->attempt($data)) {
-                throw new \Exception('Unauthorized', 401);
+            $user = User::where('email', $data['email'])->first();
+
+            if (! $user || ! Hash::check($data['password'], $user->password)) {
+                throw new \Exception('Email atau password salah', 401);
             }
 
-            $user = Auth::user();
             $user->token = $user->createToken('auth_token')->plainTextToken;
 
             DB::commit();
