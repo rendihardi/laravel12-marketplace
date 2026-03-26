@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Helpers\ImageHelper\ImageHelper;
+use App\Helpers\SlugHelper;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,13 +24,16 @@ class StoreFactory extends Factory
     {
         $imageHelper = new ImageHelper;
 
+        $name = fake()->company();
+
         return [
             'user_id' => User::factory()->hasAttached(
                 config('permission.models.role')::where('name', 'store')->first(),
                 [],
                 'roles'
             ),
-            'name' => fake()->company(),
+            'name' => $name,
+            'username' => SlugHelper::createSlug(Store::class, $name, 'username'),
             'logo' => $imageHelper->storeAndResizeImage(
                 $imageHelper->createDummyImageWithTextSizeAndPosition(
                     250,

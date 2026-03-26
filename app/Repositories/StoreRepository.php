@@ -2,8 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Helpers\SlugHelper;
 use App\Interface\StoreRepositoryInterface;
 use App\Models\Store;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StoreRepository implements StoreRepositoryInterface
@@ -40,7 +42,22 @@ class StoreRepository implements StoreRepositoryInterface
 
     public function getById(?string $id)
     {
-        return Store::find($id);
+        return Store::find($id)->withCount('products', 'transactions')->with('user')->first();
+    }
+
+    public function getByUsername(?string $username)
+    {
+        $store = Store::where('username', $username)->withCount('products', 'transactions')->with('user')->first();
+
+        return $store;
+    }
+
+    public function getByUser()
+    {
+        $user = Auth::user();
+        $query = Store::where('user_id', $user->id)->withCount('products', 'transactions')->with('user')->first();
+
+        return $query;
     }
 
     public function create(array $data)
@@ -49,6 +66,7 @@ class StoreRepository implements StoreRepositoryInterface
         try {
             $store = new Store;
             $store->name = $data['name'];
+            $store->username = SlugHelper::createSlug(Store::class, $data['name'], 'slug');
             $store->user_id = $data['user_id'];
             $store->logo = $data['logo']->store('assets/store', 'public');
             $store->about = $data['about'];
@@ -77,7 +95,10 @@ class StoreRepository implements StoreRepositoryInterface
         DB::beginTransaction();
         try {
             $store = Store::find($id);
-            $store->name = $data['name'];
+            if (isset($data['name']) && $data['name'] !== $store->name) {
+                $store->name = $data['name'];
+                $store->slug = SlugHelper::createSlug(Store::class, $data['name'], 'username');
+            }
             $store->user_id = $data['user_id'];
             if (isset($data['logo'])) {
                 $store->logo = $data['logo']->store('assets/store', 'public');

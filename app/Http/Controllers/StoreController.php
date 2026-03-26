@@ -110,6 +110,20 @@ class StoreController extends Controller implements HasMiddleware
         }
     }
 
+    public function getByUsername(string $username)
+    {
+        try {
+            $store = $this->storeRepository->getByUsername($username);
+            if (! $store) {
+                return ResponseHelper::jsonResponse(false, 'Data Store Not Found', null, 404);
+            }
+
+            return ResponseHelper::jsonResponse(true, 'Data Store', new StoreResource($store), 200);
+        } catch (\Throwable $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      */

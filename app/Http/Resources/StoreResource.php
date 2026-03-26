@@ -18,6 +18,7 @@ class StoreResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'user' => new UserResource($this->whenLoaded('user')),
+            'username' => $this->username,
             'logo' => asset('storage/'.$this->logo),
             'about' => $this->about,
             'phone' => $this->phone,

@@ -19,6 +19,7 @@ class AuthRepository implements AuthRepositoryInterface
             $user->email = $data['email'];
             $user->password = bcrypt($data['password']);
             $user->save();
+
             $user->assignRole($data['role']);
 
             if ($data['role'] == 'buyer') {
@@ -27,11 +28,17 @@ class AuthRepository implements AuthRepositoryInterface
                     'phone' => null,
                 ]);
             }
+
+            // 🔥 buat token
             $user->token = $user->createToken('auth_token')->plainTextToken;
+
+            // 🔥 load relasi
+            $user->load(['roles.permissions', 'buyer', 'store']);
 
             DB::commit();
 
             return $user;
+
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -43,7 +50,9 @@ class AuthRepository implements AuthRepositoryInterface
         DB::beginTransaction();
 
         try {
-            $user = User::where('email', $data['email'])->first();
+            $user = User::with(['roles.permissions', 'store', 'buyer'])
+                ->where('email', $data['email'])
+                ->first();
 
             if (! $user || ! Hash::check($data['password'], $user->password)) {
                 throw new \Exception('Email atau password salah', 401);
@@ -68,7 +77,7 @@ class AuthRepository implements AuthRepositoryInterface
                 throw new \Exception('Unauthorized', 401);
             }
 
-            $user = Auth::user();
+            $user = User::with(['roles', 'permissions', 'store', 'buyer'])->find(Auth::id());
             $user->permissions = $user->roles
                 ->flatMap->permissions
                 ->pluck('name');
