@@ -17,7 +17,7 @@ class StoreRepository implements StoreRepositoryInterface
                     $query->where('is_verified', $isVerified);
                 }
             }
-        });
+        })->with('user');
 
         if ($limit) {
             $query->take($limit);

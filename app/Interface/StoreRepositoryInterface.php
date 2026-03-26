@@ -21,6 +21,10 @@ interface StoreRepositoryInterface
         ?string $id
     );
 
+    // public funtion getByUsername(
+    //     ?string $username
+    // )
+
     public function create(
         array $data
     );

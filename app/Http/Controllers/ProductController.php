@@ -25,7 +25,7 @@ class ProductController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware(PermissionMiddleware::using(['product-list|product-create|product-edit|product-delete']), only: ['index', 'getAllPaginate', 'show', 'getBySlug']),
+            new Middleware(PermissionMiddleware::using(['product-list|product-create|product-edit|product-delete'])),
             new Middleware(PermissionMiddleware::using(['product-create']), only: ['store']),
             new Middleware(PermissionMiddleware::using(['product-edit']), only: ['update']),
             new Middleware(PermissionMiddleware::using(['product-delete']), only: ['destroy']),

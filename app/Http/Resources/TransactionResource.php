@@ -32,7 +32,7 @@ class TransactionResource extends JsonResource
             'delivery_proof' => $this->delivery_proof,
             'snap_token' => $this->snap_token,
             'created_at' => $this->created_at,
-            'transaction_details' => TransactionDetailResource::collection($this->transactionDetails),
+            'transaction_detail' => TransactionDetailResource::collection($this->transactionDetails),
         ];
     }
 }

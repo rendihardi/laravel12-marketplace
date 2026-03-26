@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('user', UserController::class);
     Route::get('/user/all/paginated', [UserController::class, 'getAllPaginated']);
 
-    Route::apiResource('store', StoreController::class);
+    Route::apiResource('store', StoreController::class)->except(['index', 'show']);
     Route::get('/store/all/paginated', [StoreController::class, 'getAllPaginated']);
     Route::put('/store/{id}/verified', [StoreController::class, 'updateVerifiedStatus']);
 
@@ -64,7 +64,7 @@ Route::get('/product', [ProductController::class, 'index']);
 Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
 Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 
-Route::apiResource('store', StoreController::class);
+Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/{store}', [StoreController::class, 'show']);
 
 Route::post('/register', [AuthController::class, 'register']);

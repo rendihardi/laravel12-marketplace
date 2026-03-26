@@ -22,7 +22,7 @@ class ProductCategoryResource extends JsonResource
             'tagline' => $this->tagline,
             'description' => $this->description,
             'parent' => new ProductCategoryResource($this->parent) ?? null,
-            'childrens' => ProductCategoryResource::collection($this->whenLoaded('childrens')),
+            'children' => ProductCategoryResource::collection($this->whenLoaded('childrens')),
         ];
     }
 }

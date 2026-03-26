@@ -24,3 +24,43 @@ php artisan make:factory StoreFactory
 php artisan make:seeder 
 
 LINK : php artisan storage:link
+
+
+atur route middleware
+spatie
+
+composer require spatie/laravel-permission
+
+php artisan vendor:publish --tag="permission-migrations"
+
+tambahkan hasroles model user
+
+seeder permission
+seeder role
+
+auth sanctum setting
+
+permission table ubaha yang udah disiapkan
+personal permission uuid
+
+
+personal acces token model untuk generate uuid 
+ provider boot ()
+Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+
+DOCKER
+docker compose
+.dockerignore
+
+masuk environetment marketplace
+docker-compose up -d 
+docker exec -it marketplace-web-1 bash
+
+php artisan serve --host=0.0.0.0 --port=8000
+
+
+docker compose down -v
+docker compose build --no-cache
+docker compose up -d
+docker compose logs -f web
