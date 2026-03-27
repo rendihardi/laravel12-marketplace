@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/all/paginated', [UserController::class, 'getAllPaginated']);
 
     Route::apiResource('store', StoreController::class)->except(['index', 'show']);
-    Route::get('/store/all/paginated', [StoreController::class, 'getAllPaginated']);
+    // Route::get('/store/all/paginated', [StoreController::class, 'getAllPaginated']);
     Route::put('/store/{id}/verified', [StoreController::class, 'updateVerifiedStatus']);
 
     Route::apiResource('store-balance', StoreBalanceController::class)->except('store', 'update', 'destroy');
@@ -40,13 +40,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('buyer', BuyerController::class);
     Route::get('/buyer/all/paginated', [BuyerController::class, 'getAllPaginated']);
 
-    Route::apiResource('product-category', ProductCategoryController::class);
-    Route::get('/product-category/all/paginated', [ProductCategoryController::class, 'getAllPaginated']);
-    Route::get('/product-category/slug/{slug}', [ProductCategoryController::class, 'getBySlug']);
+    Route::apiResource('product-category', ProductCategoryController::class)->except('index', 'show', 'getBySlug');
+    // Route::get('/product-category/all/paginated', [ProductCategoryController::class, 'getAllPaginated']);
+    // Route::get('/product-category/slug/{slug}', [ProductCategoryController::class, 'getBySlug']);
 
-    Route::apiResource('product', ProductController::class);
-    Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
-    Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
+    Route::apiResource('product', ProductController::class)->except('index', 'show', 'getBySlug');
+    // Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
+    // Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 
     Route::apiResource('transaction', TransactionController::class);
     Route::get('/transaction/all/paginated', [TransactionController::class, 'getAllPaginated']);
@@ -65,6 +65,7 @@ Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated
 Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 
 Route::get('/store', [StoreController::class, 'index']);
+Route::get('/store/all/paginated', [StoreController::class, 'getAllPaginated']);
 Route::get('/store/username/{username}', [StoreController::class, 'getByUsername']);
 Route::get('/my-store', [StoreController::class, 'getByUser']);
 Route::get('/store/{store}', [StoreController::class, 'show']);

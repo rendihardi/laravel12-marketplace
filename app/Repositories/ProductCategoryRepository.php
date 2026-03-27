@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\SlugHelper;
 use App\Interface\ProductCategoryInterface;
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProductCategoryRepository implements ProductCategoryInterface
@@ -22,15 +23,30 @@ class ProductCategoryRepository implements ProductCategoryInterface
             if ($isParent) {
                 $query->whereNull('parent_id');
             }
-        });
+        })->withCount(['childrens', 'products'])->with('childrens');
 
         if ($limit) {
             $query->take($limit);
         }
 
         if ($execute) {
-            return $query->get();
+            $cacheKey = "categories.all.search_{$search}.isParent_{$isParent}.limit_{$limit}";
+            $cacheDuration = now()->addMinutes(60);
+
+            return Cache::remember($cacheKey, $cacheDuration, function () use ($query) {
+                return $query->get();
+            });
         }
+
+        // if ($execute) {
+        //     $cacheKey = 'categories.all.search_'.($search ?? 'null')
+        //         .'.isParent_'.($isParent ?? 'null')
+        //         .'.limit_'.($limit ?? 'null');
+
+        //     return Cache::tags('categories')->remember($cacheKey, 60, function () use ($query) {
+        //         return $query->get();
+        //     });
+        // }
 
         return $query;
 

@@ -6,14 +6,18 @@ interface ProductInterface
 {
     public function getAll(
         ?string $search,
+        ?string $storeId,
         ?string $productCategoryid,
+        ?bool $random,
         ?int $limit,
         bool $execute,
     );
 
     public function getAllPaginated(
         ?string $search,
+        ?string $storeId,
         ?string $productCategoryid,
+        ?bool $random,
         ?int $rowPerPage
     );
 

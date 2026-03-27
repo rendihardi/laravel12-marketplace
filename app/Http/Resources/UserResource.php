@@ -28,16 +28,16 @@ class UserResource extends JsonResource
         //     // 'roles' => $this->roles->pluck('name'), multi role
         // ];
 
-        // $role = $this->whenLoaded('roles', function () {
-        //     return $this->roles->first()?->name ?? '-';
-        // }, '-');
+        $role = $this->whenLoaded('roles', function () {
+            return $this->roles->first()?->name ?? '-';
+        }, '-');
 
         return [
             'id' => $this->id,
             'profile_picture' => asset('storage/'.$this->profile_picture),
             'name' => $this->name,
             'email' => $this->email,
-            'role' => $this->roles->first()?->name ?? '-',
+            'role' => $role,
             'permissions' => $this->whenLoaded('permissions'),
             'token' => $this->when(isset($this->token), $this->token),
             'store' => $this->when(

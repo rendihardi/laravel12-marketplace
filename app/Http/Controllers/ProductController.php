@@ -25,7 +25,7 @@ class ProductController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware(PermissionMiddleware::using(['product-list|product-create|product-edit|product-delete'])),
+            // new Middleware(PermissionMiddleware::using(['product-list|product-create|product-edit|product-delete'])),
             new Middleware(PermissionMiddleware::using(['product-create']), only: ['store']),
             new Middleware(PermissionMiddleware::using(['product-edit']), only: ['update']),
             new Middleware(PermissionMiddleware::using(['product-delete']), only: ['destroy']),
@@ -39,13 +39,17 @@ class ProductController extends Controller implements HasMiddleware
     {
         $request->validate([
             'search' => 'nullable|string',
+            'store_id' => 'nullable|string|exists:stores,id',
             'product_category_id' => 'nullable|string|exists:product_categories,id',
+            'is_random' => 'nullable|boolean',
             'limit' => 'nullable|integer',
         ]);
         try {
             $products = $this->productRepository->getAll(
                 $request->search,
+                $request->store_id,
                 $request->product_category_id,
+                $request->is_random,
                 $request->limit,
                 true
             );
@@ -60,14 +64,18 @@ class ProductController extends Controller implements HasMiddleware
     {
         $request->validate([
             'search' => 'nullable|string',
-            'row_per_page' => 'required|integer',
+            'store_id' => 'nullable|string|exists:stores,id',
             'product_category_id' => 'nullable|string|exists:product_categories,id',
+            'is_Srandom' => 'nullable|boolean',
+            'row_per_page' => 'required|integer',
         ]);
 
         try {
             $products = $this->productRepository->getAllPaginated(
                 $request->search,
+                $request->store_id,
                 $request->product_category_id,
+                $request->is_random,
                 $request->row_per_page,
                 false
             );

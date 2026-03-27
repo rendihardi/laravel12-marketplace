@@ -24,8 +24,8 @@ class ProductResource extends JsonResource
             'stock' => $this->stock,
             'weight' => $this->weight,
             'description' => $this->about,
-            'product_category' => new ProductCategoryResource($this->productCategory),
-            'store' => new StoreResource($this->store),
+            'product_category' => ProductCategoryResource::make($this->whenLoaded('productCategory')),
+            'store' => new StoreResource($this->whenLoaded('store')),
             'product_reviews' => ProductReviewResource::collection($this->whenLoaded('productReviews')),
         ];
     }

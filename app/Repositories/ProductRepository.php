@@ -13,19 +13,24 @@ class ProductRepository implements ProductInterface
 {
     public function getAll(
         ?string $search,
+        ?string $storeId,
         ?string $productCategoryid,
+        ?bool $random,
         ?int $limit,
         bool $execute
     ) {
-        $query = Product::where(function ($query) use ($search, $productCategoryid) {
+        $query = Product::where(function ($query) use ($search, $storeId, $productCategoryid) {
             if ($search) {
                 $query->search($search);
+            }
+            if ($storeId) {
+                $query->where('store_id', $storeId);
             }
             if ($productCategoryid) {
                 $query->where('product_category_id', $productCategoryid);
             }
 
-        })->with('productImages');
+        })->with(['productImages', 'productCategory']);
 
         if ($limit) {
             $query->take($limit);
@@ -35,13 +40,17 @@ class ProductRepository implements ProductInterface
             return $query->get();
         }
 
+        if ($random) {
+            $query->inRandomOrder();
+        }
+
         return $query;
 
     }
 
-    public function getAllPaginated(?string $search, ?string $productCategoryid, ?int $row_per_page)
+    public function getAllPaginated(?string $search, ?string $storeId, ?string $productCategoryid, ?bool $random, ?int $row_per_page)
     {
-        $query = $this->getAll($search, $productCategoryid, $row_per_page, false);
+        $query = $this->getAll($search, $storeId, $productCategoryid, $random, $row_per_page, false);
 
         return $query->paginate($row_per_page);
 
@@ -49,12 +58,12 @@ class ProductRepository implements ProductInterface
 
     public function getById(?string $id)
     {
-        return Product::with(['productImages', 'productReviews'])->find($id);
+        return Product::with(['productImages', 'productCategory', 'productReviews', 'store'])->find($id);
     }
 
     public function getBySlug(?string $slug)
     {
-        return Product::with(['productImages', 'productReviews'])->where('slug', $slug)->first();
+        return Product::with(['productImages', 'productCategory', 'productReviews', 'store'])->where('slug', $slug)->first();
     }
 
     public function create(array $data)
