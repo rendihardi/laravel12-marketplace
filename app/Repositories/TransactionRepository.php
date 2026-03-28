@@ -25,7 +25,7 @@ class TransactionRepository implements TransactionInterface
             }
         });
 
-        if ($limit) {
+        if ($limit !== 0) {
             $query->take($limit);
         }
 

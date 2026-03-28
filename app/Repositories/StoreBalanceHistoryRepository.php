@@ -19,7 +19,7 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryInterface
             }
         });
 
-        if ($limit) {
+        if ($limit !== 0) {
             $query->take($limit);
         }
 

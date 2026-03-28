@@ -19,6 +19,41 @@ class ProductRepository implements ProductInterface
         ?int $limit,
         bool $execute
     ) {
+        // $query = Product::where(function ($query) use ($search, $storeId, $productCategoryid) {
+        //     if ($search) {
+        //         $query->search($search);
+        //     }
+        //     if ($storeId) {
+        //         $query->where('store_id', $storeId);
+        //     }
+        //     if ($productCategoryid) {
+        //         $query->where('product_category_id', $productCategoryid);
+        //     }
+        // })
+        //     ->select('products.*')
+        //     ->with(['productImages', 'productCategory']);
+
+        // // 🔥 kalau ada salah satu parameter
+        // if ($productCategoryid || $storeId) {
+
+        //     $query->addSelect([
+        //         'product_count' => Product::selectRaw('count(*)')
+        //             ->from('products as p2')
+        //             ->where(function ($q) use ($productCategoryid, $storeId) {
+
+        //                 // kalau filter category
+        //                 if ($productCategoryid) {
+        //                     $q->whereColumn('p2.product_category_id', 'products.product_category_id');
+        //                 }
+
+        //                 // kalau filter store
+        //                 if ($storeId) {
+        //                     $q->whereColumn('p2.store_id', 'products.store_id');
+        //                 }
+
+        //             }),
+        //     ]);
+        // }
         $query = Product::where(function ($query) use ($search, $storeId, $productCategoryid) {
             if ($search) {
                 $query->search($search);
@@ -30,9 +65,14 @@ class ProductRepository implements ProductInterface
                 $query->where('product_category_id', $productCategoryid);
             }
 
-        })->with(['productImages', 'productCategory']);
+        })->with([
+            'productCategory' => function ($q) {
+                $q->withCount('products');
+            },
+            'productImages',
+        ]);
 
-        if ($limit) {
+        if ($limit !== 0) {
             $query->take($limit);
         }
 
