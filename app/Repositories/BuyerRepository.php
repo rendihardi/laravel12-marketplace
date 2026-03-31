@@ -19,7 +19,7 @@ class BuyerRepository implements BuyerInterface
             }
         });
 
-        if ($limit !== 0) {
+        if ($limit && $limit > 0) {
             $query->take($limit);
         }
 

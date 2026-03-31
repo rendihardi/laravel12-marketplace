@@ -12,6 +12,6 @@ class TransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        Transaction::factory()->count(15)->create();
+        Transaction::factory()->count(100)->create();
     }
 }

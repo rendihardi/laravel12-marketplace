@@ -28,7 +28,7 @@ class TransactionResource extends JsonResource
             'tax' => (float) (string) $this->tax,
             'grand_total' => (float) (string) $this->grand_total,
             'payment_status' => $this->payment_status,
-            'status' => $this->status,
+            'delivery_status' => $this->status,
             'delivery_proof' => $this->delivery_proof,
             'snap_token' => $this->snap_token,
             'created_at' => $this->created_at,

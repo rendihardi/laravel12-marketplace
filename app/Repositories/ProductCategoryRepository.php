@@ -25,7 +25,7 @@ class ProductCategoryRepository implements ProductCategoryInterface
             }
         })->withCount(['childrens', 'products'])->with('childrens');
 
-        if ($limit !== 0) {
+        if ($limit && $limit > 0) {
             $query->take($limit);
         }
 
@@ -62,9 +62,10 @@ class ProductCategoryRepository implements ProductCategoryInterface
 
     public function getById(?string $id)
     {
-        $query = ProductCategory::find($id)->withCount('products')->with('childrens');
-
-        return $query->first();
+        return ProductCategory::withCount('products')
+            ->with('childrens')
+            ->where('id', $id)
+            ->first();
     }
 
     public function getBySlug(?string $slug)

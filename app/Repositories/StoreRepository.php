@@ -15,13 +15,13 @@ class StoreRepository implements StoreRepositoryInterface
         $query = Store::where(function ($query) use ($search, $isVerified) {
             if ($search) {
                 $query->search($search);
-                if ($isVerified) {
-                    $query->where('is_verified', $isVerified);
-                }
+            }
+            if (! is_null($isVerified)) {
+                $query->where('is_verified', $isVerified);
             }
         })->with('user');
 
-        if ($limit !== 0) {
+        if ($limit && $limit > 0) {
             $query->take($limit);
         }
 
@@ -42,7 +42,7 @@ class StoreRepository implements StoreRepositoryInterface
 
     public function getById(?string $id)
     {
-        return Store::find($id)->withCount('products', 'transactions')->with('user')->first();
+        return Store::where('id', $id)->withCount('products', 'transactions')->with('user')->first();
     }
 
     public function getByUsername(?string $username)

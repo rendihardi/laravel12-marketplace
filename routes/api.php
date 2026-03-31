@@ -57,14 +57,17 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/product-category', [ProductCategoryController::class, 'index']);
+Route::get('/product-category/{id}', [ProductCategoryController::class, 'show']);
 Route::get('/product-category/all/paginated', [ProductCategoryController::class, 'getAllPaginated']);
 Route::get('/product-category/slug/{slug}', [ProductCategoryController::class, 'getBySlug']);
 
 Route::get('/product', [ProductController::class, 'index']);
+Route::get('/product/{id}', [ProductController::class, 'show']);
 Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
 Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 
 Route::get('/store', [StoreController::class, 'index']);
+Route::get('/store/{id}', [StoreController::class, 'show']);
 Route::get('/store/all/paginated', [StoreController::class, 'getAllPaginated']);
 Route::get('/store/username/{username}', [StoreController::class, 'getByUsername']);
 Route::get('/my-store', [StoreController::class, 'getByUser']);

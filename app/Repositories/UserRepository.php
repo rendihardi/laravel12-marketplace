@@ -19,7 +19,7 @@ class UserRepository implements UserRepositoryInterface
             }
         });
 
-        if ($limit !== 0) {
+        if ($limit && $limit > 0) {
             $query->take($limit);
         }
 
