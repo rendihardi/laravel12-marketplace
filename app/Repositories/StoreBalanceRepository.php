@@ -13,11 +13,14 @@ class StoreBalanceRepository implements StoreBalanceInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = StoreBalance::where(function ($query) use ($search) {
-            if ($search) {
+        $query = StoreBalance::with([
+            'store' => function ($q) {
+                $q->withCount(['products', 'transactions']);
+            },
+        ])
+            ->when($search, function ($query) use ($search) {
                 $query->search($search);
-            }
-        });
+            });
 
         if ($limit && $limit > 0) {
             $query->take($limit);
@@ -41,7 +44,11 @@ class StoreBalanceRepository implements StoreBalanceInterface
 
     public function getById(?string $id)
     {
-        return StoreBalance::find($id);
+        return StoreBalance::with([
+            'store' => function ($q) {
+                $q->withCount(['products', 'transactions']);
+            },
+        ])->find($id);
     }
 
     public function credit(?string $id, ?string $amount)

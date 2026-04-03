@@ -64,6 +64,9 @@ class AuthRepository implements AuthRepositoryInterface
 
             return $user;
 
+        } catch (\PDOException $e) {  // ← ada interaksi DB
+            DB::rollBack();
+            throw new \Exception('Database error', 500);
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

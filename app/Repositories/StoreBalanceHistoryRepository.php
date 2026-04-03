@@ -13,11 +13,14 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = StoreBalanceHistory::where(function ($query) use ($search) {
-            if ($search) {
+        $query = StoreBalanceHistory::with([
+            'store' => function ($q) {
+                $q->withCount(['products', 'transactions']);
+            },
+        ])
+            ->when($search, function ($query) use ($search) {
                 $query->search($search);
-            }
-        });
+            });
 
         if ($limit && $limit > 0) {
             $query->take($limit);
