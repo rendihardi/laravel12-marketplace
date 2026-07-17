@@ -16,11 +16,11 @@ class TransactionDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            // 'transaction' => new TransactionResource($this->transaction),
-            // 'product' => new ProductResource($this->product),
-            'quantity' => $this->quantity,
-            'price' => $this->price,
+            'product_id' => $this->product_id,
+            'qty' => $this->qty,
+            'price' => (float) (string) $this->price,
             'subtotal' => (float) (string) $this->subtotal,
+            'product' => new ProductResource($this->product),
         ];
     }
 }

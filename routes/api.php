@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductReviewController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WithdrawalController;
+use App\Http\Controllers\MidtransController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/my-store', [StoreController::class, 'getByUser']);
+    Route::get('/my-store-balance', [StoreBalanceController::class, 'myStoreBalance']);
     Route::apiResource('user', UserController::class);
     Route::get('/user/all/paginated', [UserController::class, 'getAllPaginated']);
 
@@ -70,10 +75,10 @@ Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/{id}', [StoreController::class, 'show']);
 Route::get('/store/all/paginated', [StoreController::class, 'getAllPaginated']);
 Route::get('/store/username/{username}', [StoreController::class, 'getByUsername']);
-Route::get('/my-store', [StoreController::class, 'getByUser']);
 Route::get('/store/{store}', [StoreController::class, 'show']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/midtrans-callback', [MidtransController::class, 'callback']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth:sanctum')->get('/me', [AuthController::class, 'me'])->name('me');

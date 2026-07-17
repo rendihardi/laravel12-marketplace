@@ -24,21 +24,22 @@ class TransactionUpdateRequest extends FormRequest
     {
         return [
             'tracking_number' => 'nullable|string',
-            'status' => 'required|string|in:processing,delivering,canceled,completed',
+            'status' => 'required|string|in:processing,delivering,canceled,cancelled,completed',
             'delivery_proof' => 'nullable|image|mimes:png,jpg,jpeg|max:5048',
         ];
     }
 
-    public function atributes(): array
+    public function attributes(): array
     {
         return parent::attributes();
     }
 
-    // public function prepareForValidation()
-    // {
-    //     $this->merge([
-    //         'delivery_proof' => $this->delivery_proof ?? null,
-    //         'tracking_number' => $this->tracking_number ?? null,
-    //     ]);
-    // }
+    protected function prepareForValidation()
+    {
+        if ($this->has('delivery_status')) {
+            $this->merge([
+                'status' => $this->delivery_status,
+            ]);
+        }
+    }
 }

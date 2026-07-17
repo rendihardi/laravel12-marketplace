@@ -19,6 +19,10 @@ interface StoreBalanceInterface
         ?string $id
     );
 
+    public function getByStore(
+        ?string $storeId
+    );
+
     public function credit(
         ?string $id,
         ?string $amount

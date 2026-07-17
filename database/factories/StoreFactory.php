@@ -49,7 +49,7 @@ class StoreFactory extends Factory
             ),
             'about' => fake()->paragraph(),
             'phone' => fake()->phoneNumber(),
-            'address_id' => fake()->numberBetween(1, 100),
+            'address_id' => 64907,
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),
             'postal_code' => fake()->postcode(),

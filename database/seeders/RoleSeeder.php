@@ -13,15 +13,17 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::firstOrCreate([
+        $admin = Role::firstOrCreate([
             'name' => 'admin',
             'guard_name' => 'sanctum',
-        ])->givePermissionTo([Permission::all()]);
+        ]);
+        $admin->syncPermissions(Permission::all());
 
-        Role::firstOrCreate([
+        $buyer = Role::firstOrCreate([
             'name' => 'buyer',
             'guard_name' => 'sanctum',
-        ])->givePermissionTo([
+        ]);
+        $buyer->syncPermissions([
             'dashboard-menu',
 
             'store-list',
@@ -32,14 +34,17 @@ class RoleSeeder extends Seeder
             'transaction-menu',
             'transaction-list',
             'transaction-create',
+            'transaction-edit',
 
             'product-review-list',
             'product-review-create',
         ]);
-        Role::firstOrCreate([
+
+        $store = Role::firstOrCreate([
             'name' => 'store',
             'guard_name' => 'sanctum',
-        ])->givePermissionTo([
+        ]);
+        $store->syncPermissions([
             'dashboard-menu',
 
             'store-menu',

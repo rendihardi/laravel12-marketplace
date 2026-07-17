@@ -14,7 +14,7 @@ class WithdrawalRepository implements WithdrawalInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Withdrawal::where(function ($query) use ($search) {
+        $query = Withdrawal::latest()->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }

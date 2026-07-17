@@ -16,7 +16,7 @@ class ProductCategoryRepository implements ProductCategoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = ProductCategory::where(function ($query) use ($search, $isParent) {
+        $query = ProductCategory::latest()->where(function ($query) use ($search, $isParent) {
             if ($search) {
                 $query->search($search);
             }

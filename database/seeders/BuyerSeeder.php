@@ -12,6 +12,13 @@ class BuyerSeeder extends Seeder
      */
     public function run(): void
     {
+        $buyerUser = \App\Models\User::where('email', 'buyer@gmail.com')->first();
+        if ($buyerUser) {
+            Buyer::factory()->create([
+                'user_id' => $buyerUser->id,
+            ]);
+        }
+
         Buyer::factory()->count(15)->create();
     }
 }

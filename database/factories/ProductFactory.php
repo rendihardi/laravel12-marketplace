@@ -25,7 +25,7 @@ class ProductFactory extends Factory
         $name = fake()->words(3, true);
 
         return [
-            'store_id' => Store::factory(),
+            'store_id' => Store::inRandomOrder()->first()?->id ?? Store::factory(),
             'product_category_id' => ProductCategory::inRandomOrder()->first()->id,
             'name' => $name,
             'slug' => Str::slug($name),

@@ -13,7 +13,7 @@ class BuyerRepository implements BuyerInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Buyer::where(function ($query) use ($search) {
+        $query = Buyer::latest()->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
@@ -68,7 +68,7 @@ class BuyerRepository implements BuyerInterface
         try {
             $buyer = Buyer::find($id);
             if (isset($data['profile_picture'])) {
-                $buyer->logo = $data['profile_picture']->store('assets/buyer', 'public');
+                $buyer->profile_picture = $data['profile_picture']->store('assets/buyer', 'public');
             }
             $buyer->phone_number = $data['phone_number'];
             $buyer->save();

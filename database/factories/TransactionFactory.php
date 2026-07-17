@@ -35,8 +35,8 @@ class TransactionFactory extends Factory
         };
 
         return [
-            'buyer_id' => Buyer::factory(),
-            'store_id' => Store::factory(),
+            'buyer_id' => Buyer::inRandomOrder()->first()?->id ?? Buyer::factory(),
+            'store_id' => Store::inRandomOrder()->first()?->id ?? Store::factory(),
             'code' => 'TRX-'.$this->faker->unique()->numerify('##########'),
             'address_id' => fake()->numberBetween(1, 100),
             'address' => fake()->streetAddress(),
@@ -62,7 +62,8 @@ class TransactionFactory extends Factory
             $subtotal = 0;
 
             for ($i = 0; $i < $numberOfDetails; $i++) {
-                $product = Product::factory()->create(['store_id' => $transaction->store_id]);
+                $product = Product::where('store_id', $transaction->store_id)->inRandomOrder()->first()
+                    ?? Product::factory()->create(['store_id' => $transaction->store_id]);
                 $qty = $this->faker->numberBetween(1, 5);
                 $subtotal += $product->price * $qty;
 

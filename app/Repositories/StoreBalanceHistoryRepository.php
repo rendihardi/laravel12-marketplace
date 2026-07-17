@@ -13,7 +13,7 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = StoreBalanceHistory::with([
+        $query = StoreBalanceHistory::latest()->with([
             'store' => function ($q) {
                 $q->withCount(['products', 'transactions']);
             },

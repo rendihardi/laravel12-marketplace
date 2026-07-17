@@ -23,7 +23,7 @@ class ProductReviewStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'transaction_id' => 'required:exists:transactions,id',
+            'transaction_id' => 'required|exists:transactions,id',
             'product_id' => 'required|exists:products,id',
             'rating' => 'required|numeric|min:1|max:5',
             'review' => 'required|string',

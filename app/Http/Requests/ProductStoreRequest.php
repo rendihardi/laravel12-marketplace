@@ -37,7 +37,7 @@ class ProductStoreRequest extends FormRequest
                 },
             ],
             'name' => 'required|string',
-            'about' => 'required|string',
+            'about' => 'nullable|string',
             'price' => 'required|integer',
             'stock' => 'required|integer',
             'weight' => 'required|decimal:0,2',

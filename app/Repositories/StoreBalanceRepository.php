@@ -13,7 +13,7 @@ class StoreBalanceRepository implements StoreBalanceInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = StoreBalance::with([
+        $query = StoreBalance::latest()->with([
             'store' => function ($q) {
                 $q->withCount(['products', 'transactions']);
             },
@@ -49,6 +49,15 @@ class StoreBalanceRepository implements StoreBalanceInterface
                 $q->withCount(['products', 'transactions']);
             },
         ])->find($id);
+    }
+
+    public function getByStore(?string $storeId)
+    {
+        return StoreBalance::with([
+            'store' => function ($q) {
+                $q->withCount(['products', 'transactions']);
+            },
+        ])->where('store_id', $storeId)->first();
     }
 
     public function credit(?string $id, ?string $amount)

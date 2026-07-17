@@ -39,14 +39,17 @@ class ProductCategoryController extends Controller implements HasMiddleware
     {
         $request->validate([
             'search' => 'nullable|string',
-            'is_parent' => 'nullable|boolean',
             'limit' => 'nullable|integer',
         ]);
 
         try {
+            $isParent = $request->has('is_parent') 
+                ? filter_var($request->is_parent, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) 
+                : null;
+
             $categories = $this->productCategoryRepository->getAll(
                 $request->search,
-                $request->is_parent,
+                $isParent,
                 $request->limit,
                 true
             );

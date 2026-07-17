@@ -19,7 +19,19 @@ class TransactionRepository implements TransactionInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Transaction::where(function ($query) use ($search) {
+        $query = Transaction::latest();
+
+        $user = auth('sanctum')->user();
+        if ($user) {
+            $role = $user->roles->first()?->name;
+            if ($role === 'buyer') {
+                $query->where('buyer_id', $user->buyer?->id);
+            } elseif ($role === 'store') {
+                $query->where('store_id', $user->store?->id);
+            }
+        }
+
+        $query->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
@@ -47,12 +59,22 @@ class TransactionRepository implements TransactionInterface
 
     public function getById(?string $id)
     {
-        return Transaction::find($id);
+        return Transaction::with([
+            'buyer.user',
+            'store.user',
+            'transactionDetails.product.productCategory',
+            'transactionDetails.product.productImages',
+        ])->find($id);
     }
 
     public function getByCode(?string $code)
     {
-        return Transaction::where('code', $code)->first();
+        return Transaction::with([
+            'buyer.user',
+            'store.user',
+            'transactionDetails.product.productCategory',
+            'transactionDetails.product.productImages',
+        ])->where('code', $code)->first();
     }
 
     public function create(array $data)
@@ -120,8 +142,8 @@ class TransactionRepository implements TransactionInterface
                     'gross_amount' => $transaction->grand_total,
                 ],
                 'customer_details' => [
-                    'first_name' => $transaction->buyer->name,
-                    'email' => $transaction->buyer->email,
+                    'first_name' => $transaction->buyer->user->name ?? 'Guest',
+                    'email' => $transaction->buyer->user->email ?? 'guest@example.com',
                 ],
             ];
 
@@ -162,10 +184,12 @@ class TransactionRepository implements TransactionInterface
         $origin = Store::find($data['store_id'])->address_id;
         $destination = $data['address_id'];
 
+        \Illuminate\Support\Facades\Log::info("RajaOngkir Request - origin: {$origin}, destination: {$destination}, weight: {$weight}");
+
         $response = Http::asForm()->withHeaders([
             'key' => env('KEY_RAJA_ONGKIR'),
             'Content-Type' => 'application/x-www-form-urlencoded',
-        ])->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+        ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
             'origin' => $origin,
             'destination' => $destination,
             'weight' => $weight,
@@ -177,14 +201,19 @@ class TransactionRepository implements TransactionInterface
 
         $shippingCost = 0;
 
-        foreach ($result['data'] as $courier) {
-            if (
-                strtolower($courier['code']) === strtolower($data['shipping']) &&
-                strtoupper($courier['service']) === strtoupper($data['shipping_type'])
-            ) {
-                $shippingCost = $courier['cost'];
-                break;
+        if (isset($result['data']) && is_array($result['data'])) {
+            foreach ($result['data'] as $courier) {
+                if (
+                    strtolower($courier['code']) === strtolower($data['shipping']) &&
+                    strtoupper($courier['service']) === strtoupper($data['shipping_type'])
+                ) {
+                    $shippingCost = $courier['cost'];
+                    break;
+                }
             }
+        } else {
+            \Illuminate\Support\Facades\Log::error("RajaOngkir/Komerce API error response. Origin: {$origin}, Destination: {$destination}, Response: " . json_encode($result));
+            throw new \Exception('Failed to calculate shipping cost. The shipping destination or origin address might be invalid.');
         }
 
         return [
@@ -205,8 +234,28 @@ class TransactionRepository implements TransactionInterface
             if (isset($data['delivery_proof'])) {
                 $transaction->delivery_proof = $data['delivery_proof']->store('assets/transaction', 'public');
             }
+            $oldStatus = $transaction->status;
             $transaction->status = $data['status'];
             $transaction->save();
+
+            if ($data['status'] === 'completed' && $oldStatus !== 'completed') {
+                $storeBalance = \App\Models\StoreBalance::where('store_id', $transaction->store_id)->first();
+                if ($storeBalance) {
+                    $storeBalanceRepository = new \App\Repositories\StoreBalanceRepository;
+                    $storeBalanceRepository->credit($storeBalance->id, $transaction->grand_total);
+
+                    $storeBalanceHistoryRepository = new \App\Repositories\StoreBalanceHistoryRepository;
+                    $storeBalanceHistoryRepository->create([
+                        'store_balance_id' => $storeBalance->id,
+                        'type' => 'income',
+                        'reference_id' => $transaction->id,
+                        'reference_type' => Transaction::class,
+                        'amount' => $transaction->grand_total,
+                        'remarks' => "Pendapatan dari transaksi {$transaction->code}",
+                    ]);
+                }
+            }
+
             DB::commit();
 
             return $transaction;

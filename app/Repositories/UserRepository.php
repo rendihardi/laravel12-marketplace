@@ -13,11 +13,11 @@ class UserRepository implements UserRepositoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = User::where(function ($query) use ($search) {
+        $query = User::latest()->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
-        });
+        })->with('roles');
 
         if ($limit && $limit > 0) {
             $query->take($limit);
@@ -41,7 +41,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getById(?string $id)
     {
-        return User::find($id);
+        return User::with('roles')->find($id);
     }
 
     public function create(array $data)
@@ -55,7 +55,7 @@ class UserRepository implements UserRepositoryInterface
             $user->save();
             DB::commit();
 
-            return $user;
+            return $user->load('roles');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -74,7 +74,7 @@ class UserRepository implements UserRepositoryInterface
             $user->save();
             DB::commit();
 
-            return $user;
+            return $user->load('roles');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

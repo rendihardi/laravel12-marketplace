@@ -72,16 +72,18 @@ class ProductRepository implements ProductInterface
             'productImages',
         ]);
 
+        if (filter_var($random, FILTER_VALIDATE_BOOLEAN)) {
+            $query->inRandomOrder();
+        } else {
+            $query->latest();
+        }
+
         if ($limit && $limit > 0) {
             $query->take($limit);
         }
 
         if ($execute) {
             return $query->get();
-        }
-
-        if ($random) {
-            $query->inRandomOrder();
         }
 
         return $query;

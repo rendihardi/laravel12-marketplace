@@ -37,7 +37,7 @@ class ProductUpdateRequest extends FormRequest
                 },
             ],
             'name' => 'required|string',
-            'about' => 'required|string',
+            'about' => 'nullable|string',
             'price' => 'required|integer',
             'stock' => 'required|integer',
             'weight' => 'required|decimal:0,2',
@@ -62,6 +62,8 @@ class ProductUpdateRequest extends FormRequest
             ],
             'product_images.*.image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'product_images.*.is_thumbnail' => 'required|boolean|',
+            'deleted_product_images' => 'nullable|array',
+            'deleted_product_images.*' => 'string|exists:product_images,id',
         ];
     }
 

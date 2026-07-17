@@ -42,6 +42,7 @@ class ProductController extends Controller implements HasMiddleware
             'store_id' => 'nullable|string|exists:stores,id',
             'product_category_id' => 'nullable|string|exists:product_categories,id',
             'is_random' => 'nullable|boolean',
+            'random' => 'nullable',
             'limit' => 'nullable|integer',
         ]);
         try {
@@ -49,7 +50,7 @@ class ProductController extends Controller implements HasMiddleware
                 $request->search,
                 $request->store_id,
                 $request->product_category_id,
-                $request->is_random,
+                $request->is_random ?? $request->random,
                 $request->limit,
                 true
             );
@@ -66,7 +67,8 @@ class ProductController extends Controller implements HasMiddleware
             'search' => 'nullable|string',
             'store_id' => 'nullable|string|exists:stores,id',
             'product_category_id' => 'nullable|string|exists:product_categories,id',
-            'is_Srandom' => 'nullable|boolean',
+            'is_random' => 'nullable|boolean',
+            'random' => 'nullable',
             'row_per_page' => 'required|integer',
         ]);
 
@@ -75,7 +77,7 @@ class ProductController extends Controller implements HasMiddleware
                 $request->search,
                 $request->store_id,
                 $request->product_category_id,
-                $request->is_random,
+                $request->is_random ?? $request->random,
                 $request->row_per_page,
                 false
             );

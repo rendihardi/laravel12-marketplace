@@ -12,7 +12,7 @@ class StoreRepository implements StoreRepositoryInterface
 {
     public function getAll(?string $search, ?bool $isVerified, ?int $limit, bool $execute)
     {
-        $query = Store::where(function ($query) use ($search, $isVerified) {
+        $query = Store::latest()->where(function ($query) use ($search, $isVerified) {
             if ($search) {
                 $query->search($search);
             }
@@ -99,7 +99,9 @@ class StoreRepository implements StoreRepositoryInterface
                 $store->name = $data['name'];
                 $store->slug = SlugHelper::createSlug(Store::class, $data['name'], 'username');
             }
-            $store->user_id = $data['user_id'];
+            if (isset($data['user_id'])) {
+                $store->user_id = $data['user_id'];
+            }
             if (isset($data['logo'])) {
                 $store->logo = $data['logo']->store('assets/store', 'public');
             }

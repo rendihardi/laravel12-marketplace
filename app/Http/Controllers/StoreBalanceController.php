@@ -23,7 +23,7 @@ class StoreBalanceController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware(PermissionMiddleware::using(['store-balance-list|store-balance-create|store-balance-edit|store-balance-delete']), only: ['index', 'getAllPaginate', 'show']),
+            new Middleware(PermissionMiddleware::using(['store-balance-list|store-balance-create|store-balance-edit|store-balance-delete']), only: ['index', 'getAllPaginated', 'show']),
         ];
     }
 
@@ -60,6 +60,25 @@ class StoreBalanceController extends Controller implements HasMiddleware
             );
 
             return ResponseHelper::jsonResponse(true, 'Data User', PaginatedResource::make($balance, StoreBalanceResource::class), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
+    public function myStoreBalance(Request $request)
+    {
+        try {
+            $user = auth('sanctum')->user();
+            if (!$user || !$user->store) {
+                return ResponseHelper::jsonResponse(false, 'Store not found for this user', null, 404);
+            }
+
+            $balance = $this->storeBalanceRepository->getByStore($user->store->id);
+            if (!$balance) {
+                return ResponseHelper::jsonResponse(false, 'Data Balance Store Not Found', null, 404);
+            }
+
+            return ResponseHelper::jsonResponse(true, 'Data Balance Store', new StoreBalanceResource($balance), 200);
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
