@@ -25,10 +25,13 @@ class Product extends Model
 
     public function scopeSearch($query, $search)
     {
-        return $query->where('name', 'like', '%'.$search.'%')
-            ->whereHas('productCategory', function ($query) use ($search) {
-                $query->where('name', 'like', '%'.$search.'%');
-            });
+        return $query->where(function ($query) use ($search) {
+            $query->where('name', 'like', '%'.$search.'%')
+                ->orWhere('about', 'like', '%'.$search.'%')
+                ->orWhereHas('productCategory', function ($query) use ($search) {
+                    $query->where('name', 'like', '%'.$search.'%');
+                });
+        });
     }
 
     protected $casts = [

@@ -45,11 +45,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('buyer', BuyerController::class);
     Route::get('/buyer/all/paginated', [BuyerController::class, 'getAllPaginated']);
 
-    Route::apiResource('product-category', ProductCategoryController::class)->except('index', 'show', 'getBySlug');
+    // Route::apiResource('product-category', ProductCategoryController::class)->except('index', 'show', 'getBySlug');
     // Route::get('/product-category/all/paginated', [ProductCategoryController::class, 'getAllPaginated']);
     // Route::get('/product-category/slug/{slug}', [ProductCategoryController::class, 'getBySlug']);
 
-    Route::apiResource('product', ProductController::class)->except('index', 'show', 'getBySlug');
+    // Route::apiResource('product', ProductController::class)->except('index', 'show', 'getBySlug');
     // Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
     // Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
 
@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/transaction/all/paginated', [TransactionController::class, 'getAllPaginated']);
     Route::get('transaction/code/{code}', [TransactionController::class, 'getByCode']);
 
-    Route::apiResource('product-review', ProductReviewController::class);
+    // Route::apiResource('product-review', ProductReviewController::class);
 
 });
 
@@ -70,6 +70,8 @@ Route::get('/product', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
 Route::get('/product/all/paginated', [ProductController::class, 'getAllPaginated']);
 Route::get('/product/slug/{slug}', [ProductController::class, 'getBySlug']);
+
+Route::apiResource('product-review', ProductReviewController::class);
 
 Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/{id}', [StoreController::class, 'show']);

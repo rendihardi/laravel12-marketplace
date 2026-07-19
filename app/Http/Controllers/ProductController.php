@@ -44,6 +44,10 @@ class ProductController extends Controller implements HasMiddleware
             'is_random' => 'nullable|boolean',
             'random' => 'nullable',
             'limit' => 'nullable|integer',
+            'condition' => 'nullable|string|in:new,second',
+            'min_price' => 'nullable|numeric|min:0',
+            'max_price' => 'nullable|numeric|min:0',
+            'sort_by' => 'nullable|string|in:latest,price_asc,price_desc',
         ]);
         try {
             $products = $this->productRepository->getAll(
@@ -52,7 +56,11 @@ class ProductController extends Controller implements HasMiddleware
                 $request->product_category_id,
                 $request->is_random ?? $request->random,
                 $request->limit,
-                true
+                true,
+                $request->condition,
+                $request->min_price,
+                $request->max_price,
+                $request->sort_by
             );
 
             return ResponseHelper::jsonResponse(true, 'Data Product', ProductResource::collection($products), 200);
@@ -70,6 +78,10 @@ class ProductController extends Controller implements HasMiddleware
             'is_random' => 'nullable|boolean',
             'random' => 'nullable',
             'row_per_page' => 'required|integer',
+            'condition' => 'nullable|string|in:new,second',
+            'min_price' => 'nullable|numeric|min:0',
+            'max_price' => 'nullable|numeric|min:0',
+            'sort_by' => 'nullable|string|in:latest,price_asc,price_desc',
         ]);
 
         try {
@@ -79,7 +91,10 @@ class ProductController extends Controller implements HasMiddleware
                 $request->product_category_id,
                 $request->is_random ?? $request->random,
                 $request->row_per_page,
-                false
+                $request->condition,
+                $request->min_price,
+                $request->max_price,
+                $request->sort_by
             );
 
             return ResponseHelper::jsonResponse(true, 'Data Product', PaginatedResource::make($products, ProductResource::class), 200);

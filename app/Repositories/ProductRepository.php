@@ -17,7 +17,11 @@ class ProductRepository implements ProductInterface
         ?string $productCategoryid,
         ?bool $random,
         ?int $limit,
-        bool $execute
+        bool $execute,
+        ?string $condition = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+        ?string $sortBy = null
     ) {
         // $query = Product::where(function ($query) use ($search, $storeId, $productCategoryid) {
         //     if ($search) {
@@ -54,7 +58,7 @@ class ProductRepository implements ProductInterface
         //             }),
         //     ]);
         // }
-        $query = Product::where(function ($query) use ($search, $storeId, $productCategoryid) {
+        $query = Product::where(function ($query) use ($search, $storeId, $productCategoryid, $condition, $minPrice, $maxPrice) {
             if ($search) {
                 $query->search($search);
             }
@@ -64,18 +68,34 @@ class ProductRepository implements ProductInterface
             if ($productCategoryid) {
                 $query->where('product_category_id', $productCategoryid);
             }
+            if ($condition) {
+                $query->where('condition', $condition);
+            }
+            if (!is_null($minPrice)) {
+                $query->where('price', '>=', $minPrice);
+            }
+            if (!is_null($maxPrice)) {
+                $query->where('price', '<=', $maxPrice);
+            }
 
         })->with([
             'productCategory' => function ($q) {
                 $q->withCount('products');
             },
             'productImages',
+            'store',
         ]);
 
         if (filter_var($random, FILTER_VALIDATE_BOOLEAN)) {
             $query->inRandomOrder();
         } else {
-            $query->latest();
+            if ($sortBy === 'price_asc') {
+                $query->orderBy('price', 'asc');
+            } elseif ($sortBy === 'price_desc') {
+                $query->orderBy('price', 'desc');
+            } else {
+                $query->latest();
+            }
         }
 
         if ($limit && $limit > 0) {
@@ -90,9 +110,18 @@ class ProductRepository implements ProductInterface
 
     }
 
-    public function getAllPaginated(?string $search, ?string $storeId, ?string $productCategoryid, ?bool $random, ?int $row_per_page)
-    {
-        $query = $this->getAll($search, $storeId, $productCategoryid, $random, $row_per_page, false);
+    public function getAllPaginated(
+        ?string $search,
+        ?string $storeId,
+        ?string $productCategoryid,
+        ?bool $random,
+        ?int $row_per_page,
+        ?string $condition = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+        ?string $sortBy = null
+    ) {
+        $query = $this->getAll($search, $storeId, $productCategoryid, $random, $row_per_page, false, $condition, $minPrice, $maxPrice, $sortBy);
 
         return $query->paginate($row_per_page);
 

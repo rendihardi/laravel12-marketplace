@@ -61,7 +61,6 @@ class TransactionController extends Controller implements HasMiddleware
             $transactions = $this->transactionRepository->getAllPaginated(
                 $request->search,
                 $request->row_per_page,
-                false
             );
 
             return ResponseHelper::jsonResponse(true, 'Data Transaksi', PaginatedResource::make($transactions, TransactionResource::class), 200);

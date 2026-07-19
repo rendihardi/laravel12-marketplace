@@ -11,6 +11,10 @@ interface ProductInterface
         ?bool $random,
         ?int $limit,
         bool $execute,
+        ?string $condition = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+        ?string $sortBy = null
     );
 
     public function getAllPaginated(
@@ -18,7 +22,11 @@ interface ProductInterface
         ?string $storeId,
         ?string $productCategoryid,
         ?bool $random,
-        ?int $rowPerPage
+        ?int $rowPerPage,
+        ?string $condition = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+        ?string $sortBy = null
     );
 
     public function getById(

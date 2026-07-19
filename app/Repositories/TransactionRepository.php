@@ -186,18 +186,27 @@ class TransactionRepository implements TransactionInterface
 
         \Illuminate\Support\Facades\Log::info("RajaOngkir Request - origin: {$origin}, destination: {$destination}, weight: {$weight}");
 
-        $response = Http::asForm()->withHeaders([
-            'key' => env('KEY_RAJA_ONGKIR'),
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
-            'origin' => $origin,
-            'destination' => $destination,
-            'weight' => $weight,
-            'courier' => 'jne:sicepat:ide:sap:jnt:ninja:tiki:lion:anteraja:pos:ncs:rex:rpx:sentral:star:wahana:dse',
-            'price' => 'lowest',
-        ]);
+        $cacheKey = "shipping_cost_{$origin}_{$destination}_{$weight}_" . ($data['shipping'] ?: 'jne');
 
-        $result = $response->json();
+        try {
+            $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($origin, $destination, $weight, $data) {
+                $response = Http::asForm()->withHeaders([
+                    'key' => env('KEY_RAJA_ONGKIR'),
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+                    'origin' => $origin,
+                    'destination' => $destination,
+                    'weight' => $weight,
+                    'courier' => $data['shipping'] ?: 'jne',
+                    'price' => 'lowest',
+                ]);
+
+                return $response->json();
+            });
+        } catch (\Exception $ex) {
+            \Illuminate\Support\Facades\Log::error("RajaOngkir API call failed: " . $ex->getMessage());
+            throw new \Exception('Failed to calculate shipping cost due to external service availability.');
+        }
 
         $shippingCost = 0;
 
