@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\Store;
 use App\Models\StoreBalance;
 use App\Models\StoreBalanceHistory;
+use App\Models\User;
 use App\Models\Withdrawal;
-use Database\Factories\StoreFactory;
 use Illuminate\Database\Seeder;
 
 class StoreSeeder extends Seeder
@@ -16,7 +16,7 @@ class StoreSeeder extends Seeder
      */
     public function run(): void
     {
-        $sellerUser = \App\Models\User::where('email', 'seller@gmail.com')->first();
+        $sellerUser = User::where('email', 'seller@gmail.com')->first();
         if ($sellerUser) {
             $customStore = Store::factory()->create([
                 'user_id' => $sellerUser->id,
@@ -32,7 +32,8 @@ class StoreSeeder extends Seeder
         });
     }
 
-    private function createBalances($store) {
+    private function createBalances($store)
+    {
         $storeBalance = StoreBalance::factory()->create([
             'store_id' => $store->id,
         ]);

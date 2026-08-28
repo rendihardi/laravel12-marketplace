@@ -5,18 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Midtrans\Config;
+use Midtrans\Notification;
 
 class MidtransController extends Controller
 {
     public function callback(Request $request)
     {
         try {
-            \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-            \Midtrans\Config::$isProduction = config('midtrans.isProduction');
-            \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
-            \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+            Config::$serverKey = config('midtrans.serverKey');
+            Config::$isProduction = config('midtrans.isProduction');
+            Config::$isSanitized = config('midtrans.isSanitized');
+            Config::$is3ds = config('midtrans.is3ds');
 
-            $notification = new \Midtrans\Notification();
+            $notification = new Notification;
 
             $transactionStatus = $notification->transaction_status;
             $type = $notification->payment_type;
@@ -25,8 +27,9 @@ class MidtransController extends Controller
 
             $transaction = Transaction::where('code', $orderId)->first();
 
-            if (!$transaction) {
-                Log::warning('Midtrans Callback: Transaction code ' . $orderId . ' not found.');
+            if (! $transaction) {
+                Log::warning('Midtrans Callback: Transaction code '.$orderId.' not found.');
+
                 return response()->json(['message' => 'Transaction not found'], 404);
             }
 
@@ -58,11 +61,12 @@ class MidtransController extends Controller
             $transaction->status = $status;
             $transaction->save();
 
-            Log::info('Midtrans Callback Success: Transaction code ' . $orderId . ' updated to status ' . $status . ' and payment_status ' . $paymentStatus);
+            Log::info('Midtrans Callback Success: Transaction code '.$orderId.' updated to status '.$status.' and payment_status '.$paymentStatus);
 
             return response()->json(['message' => 'Callback processed successfully']);
         } catch (\Throwable $e) {
-            Log::error('Midtrans Callback Error: ' . $e->getMessage());
+            Log::error('Midtrans Callback Error: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }

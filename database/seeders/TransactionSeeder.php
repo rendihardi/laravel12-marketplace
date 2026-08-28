@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Store;
 use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 
@@ -12,10 +13,10 @@ class TransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        $sellerStore = \App\Models\Store::where('name', 'Toko Seller Contoh')->first();
+        $sellerStore = Store::where('name', 'Toko Seller Contoh')->first();
         if ($sellerStore) {
             Transaction::factory()->count(15)->create([
-                'store_id' => $sellerStore->id
+                'store_id' => $sellerStore->id,
             ]);
         }
 

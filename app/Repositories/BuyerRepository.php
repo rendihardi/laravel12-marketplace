@@ -13,7 +13,7 @@ class BuyerRepository implements BuyerInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Buyer::latest()->where(function ($query) use ($search) {
+        $query = Buyer::latest()->with('user')->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }

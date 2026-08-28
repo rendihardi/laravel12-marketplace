@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Buyer;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BuyerSeeder extends Seeder
@@ -12,7 +13,7 @@ class BuyerSeeder extends Seeder
      */
     public function run(): void
     {
-        $buyerUser = \App\Models\User::where('email', 'buyer@gmail.com')->first();
+        $buyerUser = User::where('email', 'buyer@gmail.com')->first();
         if ($buyerUser) {
             Buyer::factory()->create([
                 'user_id' => $buyerUser->id,

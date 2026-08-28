@@ -69,12 +69,12 @@ class StoreBalanceController extends Controller implements HasMiddleware
     {
         try {
             $user = auth('sanctum')->user();
-            if (!$user || !$user->store) {
+            if (! $user || ! $user->store) {
                 return ResponseHelper::jsonResponse(false, 'Store not found for this user', null, 404);
             }
 
             $balance = $this->storeBalanceRepository->getByStore($user->store->id);
-            if (!$balance) {
+            if (! $balance) {
                 return ResponseHelper::jsonResponse(false, 'Data Balance Store Not Found', null, 404);
             }
 

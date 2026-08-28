@@ -6,9 +6,12 @@ use App\Helpers\CodeTrxHelper;
 use App\Interface\TransactionInterface;
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\StoreBalance;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -19,7 +22,12 @@ class TransactionRepository implements TransactionInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Transaction::latest();
+        $query = Transaction::latest()->with([
+            'buyer.user',
+            'store.user',
+            'transactionDetails.product.productCategory',
+            'transactionDetails.product.productImages',
+        ]);
 
         $user = auth('sanctum')->user();
         if ($user) {
@@ -184,27 +192,27 @@ class TransactionRepository implements TransactionInterface
         $origin = Store::find($data['store_id'])->address_id;
         $destination = $data['address_id'];
 
-        \Illuminate\Support\Facades\Log::info("RajaOngkir Request - origin: {$origin}, destination: {$destination}, weight: {$weight}");
+        Log::info("RajaOngkir Request - origin: {$origin}, destination: {$destination}, weight: {$weight}");
 
         $cacheKey = "shipping_cost_{$origin}_{$destination}_{$weight}_" . ($data['shipping'] ?: 'jne');
 
         try {
-            $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($origin, $destination, $weight, $data) {
+            $result = Cache::remember($cacheKey, 3600, function () use ($origin, $destination, $weight, $data) {
                 $response = Http::asForm()->withHeaders([
                     'key' => env('KEY_RAJA_ONGKIR'),
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
-                    'origin' => $origin,
-                    'destination' => $destination,
-                    'weight' => $weight,
-                    'courier' => $data['shipping'] ?: 'jne',
-                    'price' => 'lowest',
-                ]);
+                            'origin' => $origin,
+                            'destination' => $destination,
+                            'weight' => $weight,
+                            'courier' => $data['shipping'] ?: 'jne',
+                            'price' => 'lowest',
+                        ]);
 
                 return $response->json();
             });
         } catch (\Exception $ex) {
-            \Illuminate\Support\Facades\Log::error("RajaOngkir API call failed: " . $ex->getMessage());
+            Log::error('RajaOngkir API call failed: ' . $ex->getMessage());
             throw new \Exception('Failed to calculate shipping cost due to external service availability.');
         }
 
@@ -221,7 +229,7 @@ class TransactionRepository implements TransactionInterface
                 }
             }
         } else {
-            \Illuminate\Support\Facades\Log::error("RajaOngkir/Komerce API error response. Origin: {$origin}, Destination: {$destination}, Response: " . json_encode($result));
+            Log::error("RajaOngkir/Komerce API error response. Origin: {$origin}, Destination: {$destination}, Response: " . json_encode($result));
             throw new \Exception('Failed to calculate shipping cost. The shipping destination or origin address might be invalid.');
         }
 
@@ -248,12 +256,12 @@ class TransactionRepository implements TransactionInterface
             $transaction->save();
 
             if ($data['status'] === 'completed' && $oldStatus !== 'completed') {
-                $storeBalance = \App\Models\StoreBalance::where('store_id', $transaction->store_id)->first();
+                $storeBalance = StoreBalance::where('store_id', $transaction->store_id)->first();
                 if ($storeBalance) {
-                    $storeBalanceRepository = new \App\Repositories\StoreBalanceRepository;
+                    $storeBalanceRepository = new StoreBalanceRepository;
                     $storeBalanceRepository->credit($storeBalance->id, $transaction->grand_total);
 
-                    $storeBalanceHistoryRepository = new \App\Repositories\StoreBalanceHistoryRepository;
+                    $storeBalanceHistoryRepository = new StoreBalanceHistoryRepository;
                     $storeBalanceHistoryRepository->create([
                         'store_balance_id' => $storeBalance->id,
                         'type' => 'income',

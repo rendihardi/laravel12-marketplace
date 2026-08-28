@@ -38,7 +38,9 @@ class AuthController extends Controller
 
             return ResponseHelper::jsonResponse(true, 'Login Berhasil', new UserResource($user), 200);
         } catch (\Throwable $e) {
-            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, $e->getCode() ?: 500);
+            $statusCode = is_numeric($e->getCode()) && $e->getCode() >= 400 && $e->getCode() < 600 ? (int) $e->getCode() : 401;
+
+            return ResponseHelper::jsonResponse(false, $e->getMessage() ?: 'Email atau password salah', null, $statusCode);
         }
     }
 

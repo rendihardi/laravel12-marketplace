@@ -23,7 +23,9 @@ class ProductCategoryRepository implements ProductCategoryInterface
             if ($isParent) {
                 $query->whereNull('parent_id');
             }
-        })->withCount(['childrens', 'products'])->with('childrens');
+        })->withCount(['childrens', 'products'])->with(['childrens' => function ($query) {
+            $query->withCount('products');
+        }]);
 
         if ($limit && $limit > 0) {
             $query->take($limit);
@@ -54,23 +56,26 @@ class ProductCategoryRepository implements ProductCategoryInterface
 
     public function getAllPaginated(?string $search, ?bool $isParent, ?int $row_per_page)
     {
-        $query = $this->getAll($search, $isParent = false, $row_per_page, false);
+        $query = $this->getAll($search, $isParent, $row_per_page, false);
 
         return $query->paginate($row_per_page);
-
     }
 
     public function getById(?string $id)
     {
         return ProductCategory::withCount('products')
-            ->with('childrens')
+            ->with(['childrens' => function ($query) {
+                $query->withCount('products');
+            }])
             ->where('id', $id)
             ->first();
     }
 
     public function getBySlug(?string $slug)
     {
-        $query = ProductCategory::where('slug', $slug)->withCount('products')->with('childrens');
+        $query = ProductCategory::where('slug', $slug)->withCount('products')->with(['childrens' => function ($query) {
+            $query->withCount('products');
+        }]);
 
         return $query->first();
     }

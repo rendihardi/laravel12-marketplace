@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\SlugHelper;
 use App\Interface\ProductInterface;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -66,22 +67,23 @@ class ProductRepository implements ProductInterface
                 $query->where('store_id', $storeId);
             }
             if ($productCategoryid) {
-                $query->where('product_category_id', $productCategoryid);
+                $categoryIds = ProductCategory::where('id', $productCategoryid)
+                    ->orWhere('parent_id', $productCategoryid)
+                    ->pluck('id');
+                $query->whereIn('product_category_id', $categoryIds);
             }
             if ($condition) {
                 $query->where('condition', $condition);
             }
-            if (!is_null($minPrice)) {
+            if (! is_null($minPrice)) {
                 $query->where('price', '>=', $minPrice);
             }
-            if (!is_null($maxPrice)) {
+            if (! is_null($maxPrice)) {
                 $query->where('price', '<=', $maxPrice);
             }
 
         })->with([
-            'productCategory' => function ($q) {
-                $q->withCount('products');
-            },
+            'productCategory',
             'productImages',
             'store',
         ]);
@@ -129,12 +131,12 @@ class ProductRepository implements ProductInterface
 
     public function getById(?string $id)
     {
-        return Product::with(['productImages', 'productCategory', 'productReviews', 'store'])->find($id);
+        return Product::with(['productImages', 'productCategory.parent', 'productReviews', 'store'])->find($id);
     }
 
     public function getBySlug(?string $slug)
     {
-        return Product::with(['productImages', 'productCategory', 'productReviews', 'store'])->where('slug', $slug)->first();
+        return Product::with(['productImages', 'productCategory.parent', 'productReviews', 'store'])->where('slug', $slug)->first();
     }
 
     public function create(array $data)
